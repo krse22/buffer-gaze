@@ -22,12 +22,12 @@ export default function MainNavbar() {
               <NavigationMenu.Content className="mt-2 w-48 rounded-xl border border-divider bg-surface p-2 shadow-md">
                 <ul>
                   <li>
-                    <a
-                      href="#"
-                      className="block rounded-lg p-2 text-foreground no-underline hover:bg-neutral-200"
+                    <button
+                      type="button"
+                      className="block w-full rounded-lg p-2 text-left text-foreground hover:bg-neutral-200"
                     >
                       Hello world
-                    </a>
+                    </button>
                   </li>
                 </ul>
               </NavigationMenu.Content>

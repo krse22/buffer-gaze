@@ -32,7 +32,10 @@ export default function ChannelLayout({ params }: ChannelLayoutProps) {
 
   const { data: selectedPost, isLoading: isLoadingPost } = useQuery({
     queryKey: ["post", selectedPostId],
-    queryFn: () => fetchPost(selectedPostId!),
+    queryFn: () => {
+      if (!selectedPostId) throw new Error("No post ID");
+      return fetchPost(selectedPostId);
+    },
     enabled: !!selectedPostId,
   });
 
@@ -74,6 +77,7 @@ export default function ChannelLayout({ params }: ChannelLayoutProps) {
           <header className="flex flex-none items-center gap-3 p-6 pb-3">
             <div className="flex-1" />
             <button
+              type="button"
               onClick={handleClose}
               className="flex h-9 w-9 items-center justify-center rounded-full border border-divider transition-colors hover:bg-neutral-200"
             >

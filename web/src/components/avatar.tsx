@@ -22,18 +22,14 @@ export function Avatar({ src, alt = "", size = "md", fallback, className = "" }:
       <img
         src={src}
         alt={alt}
-        className={`flex-none rounded-full object-cover ${sizeStyles[size]}
-          ${className}
-        `.trim()}
+        className={`flex-none rounded-full object-cover ${sizeStyles[size]} ${className}`.trim()}
       />
     );
   }
 
   return (
     <div
-      className={`flex flex-none items-center justify-center rounded-full bg-neutral-200 font-semibold text-neutral-600 ${sizeStyles[size]}
-        ${className}
-      `.trim()}
+      className={`flex flex-none items-center justify-center rounded-full bg-neutral-200 font-semibold text-neutral-600 ${sizeStyles[size]} ${className}`.trim()}
     >
       {initials}
     </div>

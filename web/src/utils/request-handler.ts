@@ -1,7 +1,7 @@
 const BUFFER_GRAPHQL_ENDPOINT = "https://api.buffer.com";
 
-export async function clientSideRequestHandler(body: any) {
-  const _response = await fetch(BUFFER_GRAPHQL_ENDPOINT, {
+export async function clientSideRequestHandler(body: string) {
+  const response = await fetch(BUFFER_GRAPHQL_ENDPOINT, {
     method: "POST",
     credentials: "include",
     headers: {
@@ -9,4 +9,5 @@ export async function clientSideRequestHandler(body: any) {
     },
     body,
   });
+  return response;
 }

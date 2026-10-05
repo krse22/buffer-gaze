@@ -10,6 +10,9 @@
     "enabled": true,
     "rules": {
       "preset": "recommended",
+      "performance": {
+        "noImgElement": "off"
+      },
       "complexity": {
         "noExcessiveCognitiveComplexity": "error",
         "noVoid": "error",
@@ -50,6 +53,26 @@
     }
   },
   "files": {
-    "includes": ["**", "!**/.next/", "!**/node_modules/", "!**/public/"]
+    "includes": [
+      "**/*.ts",
+      "**/*.tsx",
+      "**/*.js",
+      "**/*.jsx",
+      "**/*.json",
+      "!**/.next",
+      "!**/node_modules",
+      "!**/public"
+    ]
+  },
+  "css": {
+    "parser": {
+      "cssModules": true
+    },
+    "linter": {
+      "enabled": false
+    },
+    "formatter": {
+      "enabled": false
+    }
   }
 }

@@ -13,6 +13,7 @@ type PostCompactItemProps = {
 export function PostCompactItem({ post, isSelected, onClick }: PostCompactItemProps) {
   return (
     <button
+      type="button"
       onClick={onClick}
       className={`flex cursor-pointer flex-col gap-1 rounded-xl border-0 p-3 text-left font-body text-foreground transition-colors ${
         isSelected

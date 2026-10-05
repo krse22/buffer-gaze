@@ -41,6 +41,7 @@ export function PostDetail({ post, position, onPrev, onNext, onClose }: PostDeta
         )}
         {onClose && (
           <button
+            type="button"
             onClick={onClose}
             className="flex h-9 w-9 items-center justify-center rounded-full border border-divider transition-colors hover:bg-neutral-200"
           >

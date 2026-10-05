@@ -7,6 +7,10 @@ import { getBaseUrl } from "@/utils/get-base-url";
 const BUFFER_AUTH_ENDPOINT = process.env.BUFFER_AUTH_ENDPOINT;
 const CLIENT_ID = process.env.BUFFER_CLIENT_ID;
 
+if (!CLIENT_ID) {
+  throw new Error("BUFFER_CLIENT_ID environment variable is required");
+}
+
 export async function GET(request: Request) {
   const codeVerifier = generateCodeVerifier();
   const codeChallenge = await generateCodeChallenge(codeVerifier);
@@ -39,7 +43,7 @@ export async function GET(request: Request) {
   const redirectUri = `${baseUrl}/api/auth/callback`;
 
   const params = new URLSearchParams({
-    client_id: CLIENT_ID!,
+    client_id: CLIENT_ID,
     redirect_uri: redirectUri,
     response_type: "code",
     scope:

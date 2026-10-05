@@ -14,9 +14,10 @@ export function PostTableRow({ post, onClick }: PostTableRowProps) {
   const assetCount = post.assets.length;
 
   return (
-    <div
+    <button
+      type="button"
       onClick={onClick}
-      className={`grid cursor-pointer items-center gap-4 rounded-xl border-divider border-b p-3 transition-colors hover:bg-neutral-200`}
+      className="grid w-full cursor-pointer items-center gap-4 rounded-xl border-0 border-divider border-b bg-transparent p-3 text-left transition-colors hover:bg-neutral-200"
       style={{ gridTemplateColumns: "minmax(0, 2.5fr) 100px 100px" }}
     >
       <div className="flex min-w-0 items-center gap-3">
@@ -51,6 +52,6 @@ export function PostTableRow({ post, onClick }: PostTableRowProps) {
             })
           : "—"}
       </div>
-    </div>
+    </button>
   );
 }

@@ -35,12 +35,13 @@ cd web-tests && npm run check  # Lint + format
 ## Conventions
 
 - Use functional components with hooks
-- Prefer `next/image` over `<img>`
+- Use `<img>` for images (not `next/image` - too many external domains)
 - Use `useRouter` for navigation, not `window.location`
 - Keep components small and focused
 - Colocate related files
 
 ## Git
 
+- **ALWAYS ask before committing or pushing - no exceptions**
 - Keep commit messages short (one line)
 - No co-authored-by lines
