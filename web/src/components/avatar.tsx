@@ -1,6 +1,4 @@
-import * as React from 'react';
-
-export type AvatarSize = 'sm' | 'md' | 'lg';
+export type AvatarSize = "sm" | "md" | "lg";
 
 export interface AvatarProps {
   src?: string;
@@ -11,18 +9,12 @@ export interface AvatarProps {
 }
 
 const sizeStyles: Record<AvatarSize, string> = {
-  sm: 'w-6 h-6 text-[10px]',
-  md: 'w-10 h-10 text-sm',
-  lg: 'w-14 h-14 text-lg',
+  sm: "w-6 h-6 text-[10px]",
+  md: "w-10 h-10 text-sm",
+  lg: "w-14 h-14 text-lg",
 };
 
-export function Avatar({
-  src,
-  alt = '',
-  size = 'md',
-  fallback,
-  className = '',
-}: AvatarProps) {
+export function Avatar({ src, alt = "", size = "md", fallback, className = "" }: AvatarProps) {
   const initials = fallback || alt.charAt(0).toUpperCase();
 
   if (src) {
@@ -30,9 +22,7 @@ export function Avatar({
       <img
         src={src}
         alt={alt}
-        className={`
-          rounded-full object-cover flex-none
-          ${sizeStyles[size]}
+        className={`flex-none rounded-full object-cover ${sizeStyles[size]}
           ${className}
         `.trim()}
       />
@@ -41,12 +31,7 @@ export function Avatar({
 
   return (
     <div
-      className={`
-        rounded-full flex-none
-        flex items-center justify-center
-        bg-neutral-200 text-neutral-600
-        font-semibold
-        ${sizeStyles[size]}
+      className={`flex flex-none items-center justify-center rounded-full bg-neutral-200 font-semibold text-neutral-600 ${sizeStyles[size]}
         ${className}
       `.trim()}
     >

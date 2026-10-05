@@ -1,10 +1,9 @@
-'use client';
+"use client";
 
-import type { Post } from '@/contracts/post';
-import { Tag } from '@/components/tag';
-import Button from '@/components/button';
-import { PostTableRow } from './post-table-row';
-import { PostTableSkeleton } from './skeletons';
+import Button from "@/components/button";
+import type { Post } from "@/contracts/post";
+import { PostTableRow } from "./post-table-row";
+import { PostTableSkeleton } from "./skeletons";
 
 type PostTableViewProps = {
   posts: Post[];
@@ -27,29 +26,23 @@ export function PostTableView({
   error,
 }: PostTableViewProps) {
   if (error) {
-    return (
-      <div>{error.message}</div>
-    );
+    return <div>{error.message}</div>;
   }
 
   if (isLoading) {
-    return (<PostTableSkeleton />);
+    return <PostTableSkeleton />;
   }
 
   return (
     <>
-      {posts.map((post) => 
-        <PostTableRow
-          key={post.id}
-          post={post}
-          onClick={() => onSelectPost?.(post)}
-        />
-      )}
+      {posts.map((post) => (
+        <PostTableRow key={post.id} post={post} onClick={() => onSelectPost?.(post)} />
+      ))}
 
       {hasMore && (
         <div className="pt-4">
           <Button variant="secondary" onClick={onLoadMore} disabled={isLoadingMore}>
-            {isLoadingMore ? 'Loading...' : 'Load more'}
+            {isLoadingMore ? "Loading..." : "Load more"}
           </Button>
         </div>
       )}

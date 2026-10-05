@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import type { Post } from '@/contracts/post';
-import { Tag } from '@/components/tag';
-import { getStatusVariant } from './utils';
+import { Tag } from "@/components/tag";
+import type { Post } from "@/contracts/post";
+import { getStatusVariant } from "./utils";
 
 type PostCompactItemProps = {
   post: Post;
@@ -14,23 +14,21 @@ export function PostCompactItem({ post, isSelected, onClick }: PostCompactItemPr
   return (
     <button
       onClick={onClick}
-      className={`
-        flex flex-col gap-1 text-left p-3 border-0 rounded-xl cursor-pointer
-        font-body text-foreground transition-colors
-        ${isSelected
-          ? 'bg-neutral-200 shadow-[inset_3px_0_0_var(--color-accent)]'
-          : 'bg-transparent hover:bg-neutral-200'
-        }
+      className={`flex cursor-pointer flex-col gap-1 rounded-xl border-0 p-3 text-left font-body text-foreground transition-colors ${
+        isSelected
+          ? "bg-neutral-200 shadow-[inset_3px_0_0_var(--color-accent)]"
+          : "bg-transparent hover:bg-neutral-200"
+      }
       `}
     >
-      <span className="text-sm font-semibold line-clamp-2 text-neutral-800">
-        {post.text?.slice(0, 60) || 'No text'}
+      <span className="line-clamp-2 font-semibold text-neutral-800 text-sm">
+        {post.text?.slice(0, 60) || "No text"}
       </span>
-      <span className="flex items-center gap-2 text-xs text-neutral-600">
+      <span className="flex items-center gap-2 text-neutral-600 text-xs">
         <Tag variant={getStatusVariant(post.status)}>{post.status}</Tag>
         {post.dueAt && (
           <span className="ml-auto">
-            {new Date(post.dueAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
+            {new Date(post.dueAt).toLocaleDateString(undefined, { month: "short", day: "numeric" })}
           </span>
         )}
       </span>

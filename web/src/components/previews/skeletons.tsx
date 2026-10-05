@@ -4,18 +4,18 @@ export function PostTableSkeleton() {
       {[1, 2, 3, 4].map((i) => (
         <div
           key={i}
-          className="grid gap-4 p-3 border-b border-divider"
-          style={{ gridTemplateColumns: 'minmax(0, 2.5fr) 100px 100px' }}
+          className="grid gap-4 border-divider border-b p-3"
+          style={{ gridTemplateColumns: "minmax(0, 2.5fr) 100px 100px" }}
         >
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-neutral-200 rounded-lg flex-none" />
+            <div className="h-10 w-10 flex-none rounded-lg bg-neutral-200" />
             <div className="flex-1">
-              <div className="h-4 bg-neutral-200 rounded w-3/4 mb-1" />
-              <div className="h-3 bg-neutral-200 rounded w-1/2" />
+              <div className="mb-1 h-4 w-3/4 rounded bg-neutral-200" />
+              <div className="h-3 w-1/2 rounded bg-neutral-200" />
             </div>
           </div>
-          <div className="h-5 bg-neutral-200 rounded-full w-16" />
-          <div className="h-4 bg-neutral-200 rounded w-14 ml-auto" />
+          <div className="h-5 w-16 rounded-full bg-neutral-200" />
+          <div className="ml-auto h-4 w-14 rounded bg-neutral-200" />
         </div>
       ))}
     </div>
@@ -24,14 +24,14 @@ export function PostTableSkeleton() {
 
 export function PostCompactSkeleton() {
   return (
-    <div className="animate-pulse flex flex-col gap-1">
+    <div className="flex animate-pulse flex-col gap-1">
       {[1, 2, 3, 4].map((i) => (
-        <div key={i} className="p-3 rounded-xl">
-          <div className="h-4 bg-neutral-200 rounded w-full mb-2" />
-          <div className="h-4 bg-neutral-200 rounded w-3/4 mb-2" />
+        <div key={i} className="rounded-xl p-3">
+          <div className="mb-2 h-4 w-full rounded bg-neutral-200" />
+          <div className="mb-2 h-4 w-3/4 rounded bg-neutral-200" />
           <div className="flex items-center gap-2">
-            <div className="h-5 bg-neutral-200 rounded-full w-16" />
-            <div className="h-3 bg-neutral-200 rounded w-12 ml-auto" />
+            <div className="h-5 w-16 rounded-full bg-neutral-200" />
+            <div className="ml-auto h-3 w-12 rounded bg-neutral-200" />
           </div>
         </div>
       ))}

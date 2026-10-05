@@ -1,79 +1,85 @@
-import { cookies } from 'next/headers';
-import { redirect } from 'next/navigation';
-import { NextResponse } from 'next/server';
-import { ApiErrorResponse, BufferErrorNonRec, NetworkError, NonRecoverableError, UnauthorizedError } from '@/contracts/errors';
-import { COOKIE_KEYS } from '@/constants';
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
+import { NextResponse } from "next/server";
+import { COOKIE_KEYS } from "@/constants";
+import {
+  type ApiErrorResponse,
+  BufferErrorNonRec,
+  NetworkError,
+  type NonRecoverableError,
+  UnauthorizedError,
+} from "@/contracts/errors";
 
 const BUFFER_API_ENDPOINT = process.env.BUFFER_API_ENDPOINT;
 const BUFFER_AUTH_ENDPOINT = process.env.BUFFER_AUTH_ENDPOINT;
 const CLIENT_ID = process.env.BUFFER_CLIENT_ID;
 
 type TokenResponse = {
-    access_token: string;
-    refresh_token: string;
-    expires_in: number;
+  access_token: string;
+  refresh_token: string;
+  expires_in: number;
 };
 
 type RefreshResult =
-    | { success: true; accessToken: string }
-    | { success: false; errorMessage: string };
+  | { success: true; accessToken: string }
+  | { success: false; errorMessage: string };
 
 /**
  * Attempts to refresh the access token using the refresh token.
  * Updates cookies with new tokens on success.
  */
 async function refreshAccessToken(): Promise<RefreshResult> {
-    const cookieStore = await cookies();
-    const refreshToken = cookieStore.get(COOKIE_KEYS.REFRESH_TOKEN)?.value;
+  const cookieStore = await cookies();
+  const refreshToken = cookieStore.get(COOKIE_KEYS.REFRESH_TOKEN)?.value;
 
-    if (!refreshToken) {
-        return { success: false, errorMessage: 'No refresh token' };
+  if (!refreshToken) {
+    return { success: false, errorMessage: "No refresh token" };
+  }
+
+  try {
+    const response = await fetch(`${BUFFER_AUTH_ENDPOINT}/token`, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams({
+        client_id: CLIENT_ID ?? "",
+        grant_type: "refresh_token",
+        refresh_token: refreshToken,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (response.status !== 200) {
+      const errorMessage = data.error_description || data.error || "Token refresh failed";
+      return { success: false, errorMessage };
     }
 
-    try {
-        const response = await fetch(`${BUFFER_AUTH_ENDPOINT}/token`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: new URLSearchParams({
-                client_id: CLIENT_ID ?? '',
-                grant_type: 'refresh_token',
-                refresh_token: refreshToken,
-            }),
-        });
+    const tokens: TokenResponse = data;
 
-        const data = await response.json();
+    cookieStore.set({
+      name: COOKIE_KEYS.ACCESS_TOKEN,
+      value: tokens.access_token,
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      path: "/",
+      maxAge: tokens.expires_in,
+      sameSite: "lax",
+    });
 
-        if (response.status !== 200) {
-            const errorMessage = data.error_description || data.error || 'Token refresh failed';
-            return { success: false, errorMessage };
-        }
+    cookieStore.set({
+      name: COOKIE_KEYS.REFRESH_TOKEN,
+      value: tokens.refresh_token,
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      path: "/",
+      sameSite: "lax",
+    });
 
-        const tokens: TokenResponse = data;
-
-        cookieStore.set({
-            name: COOKIE_KEYS.ACCESS_TOKEN,
-            value: tokens.access_token,
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            path: '/',
-            maxAge: tokens.expires_in,
-            sameSite: 'lax',
-        });
-
-        cookieStore.set({
-            name: COOKIE_KEYS.REFRESH_TOKEN,
-            value: tokens.refresh_token,
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            path: '/',
-            sameSite: 'lax',
-        });
-
-        return { success: true, accessToken: tokens.access_token };
-    } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : 'Network error during refresh';
-        return { success: false, errorMessage };
-    }
+    return { success: true, accessToken: tokens.access_token };
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : "Network error during refresh";
+    return { success: false, errorMessage };
+  }
 }
 
 /**
@@ -82,10 +88,10 @@ async function refreshAccessToken(): Promise<RefreshResult> {
  * @returns {Promise<void>}
  */
 async function clearAuthCookies(): Promise<void> {
-    const cookieStore = await cookies();
-    cookieStore.delete(COOKIE_KEYS.ACCESS_TOKEN);
-    cookieStore.delete(COOKIE_KEYS.REFRESH_TOKEN);
-    cookieStore.delete(COOKIE_KEYS.ORGANIZATION_ID);
+  const cookieStore = await cookies();
+  cookieStore.delete(COOKIE_KEYS.ACCESS_TOKEN);
+  cookieStore.delete(COOKIE_KEYS.REFRESH_TOKEN);
+  cookieStore.delete(COOKIE_KEYS.ORGANIZATION_ID);
 }
 
 /**
@@ -94,37 +100,40 @@ async function clearAuthCookies(): Promise<void> {
  * @param {string} query - The GraphQL query string
  * @returns {Promise<T | Error | UnauthorizedError | BufferErrorNonRec | NetworkError>} The data from the API response
  */
-async function executeBufferQuery<T>(query: string): Promise<T | Error | UnauthorizedError | BufferErrorNonRec | NetworkError> {
-    const cookieStore = await cookies();
-    const accessToken = cookieStore.get(COOKIE_KEYS.ACCESS_TOKEN)?.value;
+async function executeBufferQuery<T>(
+  query: string,
+): Promise<T | Error | UnauthorizedError | BufferErrorNonRec | NetworkError> {
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get(COOKIE_KEYS.ACCESS_TOKEN)?.value;
 
-    try {
-        const response = await fetch(`${BUFFER_API_ENDPOINT}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${accessToken}`,
-            },
-            body: JSON.stringify({ query }),
-        });
+  try {
+    const response = await fetch(`${BUFFER_API_ENDPOINT}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: JSON.stringify({ query }),
+    });
 
-        if (!response.ok) {
-            if (response.status === 401) {
-                return new UnauthorizedError('Authentication failed');
-            }
+    if (!response.ok) {
+      if (response.status === 401) {
+        return new UnauthorizedError("Authentication failed");
+      }
 
-            return new Error(`Buffer API failed with status: ${response.status}`);
-        }
-
-        const { data, errors }: { data: T, errors: Array<NonRecoverableError> | undefined } = await response.json();
-        if (errors) {
-            return new BufferErrorNonRec(errors[0]);
-        }
-
-        return data;
-    } catch {
-        return new NetworkError('Failed to connect to Buffer API');
+      return new Error(`Buffer API failed with status: ${response.status}`);
     }
+
+    const { data, errors }: { data: T; errors: Array<NonRecoverableError> | undefined } =
+      await response.json();
+    if (errors) {
+      return new BufferErrorNonRec(errors[0]);
+    }
+
+    return data;
+  } catch {
+    return new NetworkError("Failed to connect to Buffer API");
+  }
 }
 
 /**
@@ -134,20 +143,22 @@ async function executeBufferQuery<T>(query: string): Promise<T | Error | Unautho
  * @param {string} query - The GraphQL query to retry
  * @returns {Promise<T | Error | BufferErrorNonRec | NetworkError>} The retry result
  */
-async function refreshAndRetry<T>(query: string): Promise<T | Error | BufferErrorNonRec | NetworkError> {
-    const refreshResult = await refreshAccessToken();
-    if (!refreshResult.success) {
-        await clearAuthCookies();
-        redirect('/');
-    }
+async function refreshAndRetry<T>(
+  query: string,
+): Promise<T | Error | BufferErrorNonRec | NetworkError> {
+  const refreshResult = await refreshAccessToken();
+  if (!refreshResult.success) {
+    await clearAuthCookies();
+    redirect("/");
+  }
 
-    const result = await executeBufferQuery<T>(query);
-    if (result instanceof UnauthorizedError) {
-        await clearAuthCookies();
-        redirect('/');
-    }
+  const result = await executeBufferQuery<T>(query);
+  if (result instanceof UnauthorizedError) {
+    await clearAuthCookies();
+    redirect("/");
+  }
 
-    return result;
+  return result;
 }
 
 /**
@@ -163,20 +174,22 @@ async function refreshAndRetry<T>(query: string): Promise<T | Error | BufferErro
  * @param {string} query - The GraphQL query to execute
  * @returns {Promise<T | Error | UnauthorizedError | BufferErrorNonRec | NetworkError>} The query result or an error
  */
-export async function bufferApi<T>(query: string): Promise<T | Error | UnauthorizedError | BufferErrorNonRec | NetworkError> {
-    const result = await executeBufferQuery<T>(query);
+export async function bufferApi<T>(
+  query: string,
+): Promise<T | Error | UnauthorizedError | BufferErrorNonRec | NetworkError> {
+  const result = await executeBufferQuery<T>(query);
 
-    // HTTP 401 - attempt refresh and retry
-    if (result instanceof UnauthorizedError) {
-        return await refreshAndRetry<T>(query);
-    }
+  // HTTP 401 - attempt refresh and retry
+  if (result instanceof UnauthorizedError) {
+    return await refreshAndRetry<T>(query);
+  }
 
-    // GraphQL UNAUTHORIZED error - attempt refresh and retry
-    if (result instanceof BufferErrorNonRec && result.error.extensions.code === 'UNAUTHORIZED') {
-        return await refreshAndRetry<T>(query);
-    }
+  // GraphQL UNAUTHORIZED error - attempt refresh and retry
+  if (result instanceof BufferErrorNonRec && result.error.extensions.code === "UNAUTHORIZED") {
+    return await refreshAndRetry<T>(query);
+  }
 
-    return result;
+  return result;
 }
 
 /**
@@ -186,23 +199,23 @@ export async function bufferApi<T>(query: string): Promise<T | Error | Unauthori
  * @returns {ApiErrorResponse} Unified error response for frontend
  */
 export function extractError(error: Error): ApiErrorResponse {
-    if (error instanceof UnauthorizedError) {
-        return { type: 'unauthorized', message: error.message };
-    }
+  if (error instanceof UnauthorizedError) {
+    return { type: "unauthorized", message: error.message };
+  }
 
-    if (error instanceof NetworkError) {
-        return { type: 'network', message: error.message };
-    }
+  if (error instanceof NetworkError) {
+    return { type: "network", message: error.message };
+  }
 
-    if (error instanceof BufferErrorNonRec) {
-        return {
-            type: 'buffer_api',
-            message: error.error.message,
-            code: error.error.extensions.code,
-        };
-    }
+  if (error instanceof BufferErrorNonRec) {
+    return {
+      type: "buffer_api",
+      message: error.error.message,
+      code: error.error.extensions.code,
+    };
+  }
 
-    return { type: 'unknown', message: error.message };
+  return { type: "unknown", message: error.message };
 }
 
 /**
@@ -212,22 +225,24 @@ export function extractError(error: Error): ApiErrorResponse {
  * @param {T | Error | UnauthorizedError | BufferErrorNonRec | NetworkError} result - The result from bufferApi
  * @returns {NextResponse} JSON response with appropriate status code
  */
-export function toNextResponse<T>(result: T | Error | UnauthorizedError | BufferErrorNonRec | NetworkError): NextResponse {
-    if (result instanceof UnauthorizedError) {
-        return NextResponse.json({ error: extractError(result) }, { status: 401 });
-    }
+export function toNextResponse<T>(
+  result: T | Error | UnauthorizedError | BufferErrorNonRec | NetworkError,
+): NextResponse {
+  if (result instanceof UnauthorizedError) {
+    return NextResponse.json({ error: extractError(result) }, { status: 401 });
+  }
 
-    if (result instanceof NetworkError) {
-        return NextResponse.json({ error: extractError(result) }, { status: 503 });
-    }
+  if (result instanceof NetworkError) {
+    return NextResponse.json({ error: extractError(result) }, { status: 503 });
+  }
 
-    if (result instanceof BufferErrorNonRec) {
-        return NextResponse.json({ error: extractError(result) }, { status: 500 });
-    }
+  if (result instanceof BufferErrorNonRec) {
+    return NextResponse.json({ error: extractError(result) }, { status: 500 });
+  }
 
-    if (result instanceof Error) {
-        return NextResponse.json({ error: extractError(result) }, { status: 500 });
-    }
+  if (result instanceof Error) {
+    return NextResponse.json({ error: extractError(result) }, { status: 500 });
+  }
 
-    return NextResponse.json(result);
+  return NextResponse.json(result);
 }

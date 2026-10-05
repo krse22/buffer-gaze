@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import { use } from 'react';
-import { useRouter, usePathname } from 'next/navigation';
-import { useQuery } from '@tanstack/react-query';
-import type { Post } from '@/contracts/post';
-import { PostPreviewList } from '@/components/previews/post-preview-list';
-import { PostDetail } from '@/components/post-detail';
-import { X } from 'lucide-react';
+import { useQuery } from "@tanstack/react-query";
+import { X } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
+import { use } from "react";
+import { PostDetail } from "@/components/post-detail";
+import { PostPreviewList } from "@/components/previews/post-preview-list";
+import type { Post } from "@/contracts/post";
 
 type ChannelLayoutProps = {
   children: React.ReactNode;
@@ -17,7 +17,7 @@ async function fetchPost(postId: string): Promise<Post> {
   const response = await fetch(`/api/posts/${postId}`);
   const data = await response.json();
   if (!response.ok) {
-    throw new Error(data.error?.message || 'Failed to fetch post');
+    throw new Error(data.error?.message || "Failed to fetch post");
   }
   return data;
 }
@@ -31,7 +31,7 @@ export default function ChannelLayout({ params }: ChannelLayoutProps) {
   const selectedPostId = postIdMatch ? postIdMatch[1] : null;
 
   const { data: selectedPost, isLoading: isLoadingPost } = useQuery({
-    queryKey: ['post', selectedPostId],
+    queryKey: ["post", selectedPostId],
     queryFn: () => fetchPost(selectedPostId!),
     enabled: !!selectedPostId,
   });
@@ -47,7 +47,7 @@ export default function ChannelLayout({ params }: ChannelLayoutProps) {
   // No post selected - show full-width list
   if (!selectedPostId) {
     return (
-      <div className="flex min-h-0 h-full">
+      <div className="flex h-full min-h-0">
         <PostPreviewList
           channelId={channelId}
           selectedPostId={null}
@@ -59,7 +59,7 @@ export default function ChannelLayout({ params }: ChannelLayoutProps) {
 
   // Post selected - show list + detail
   return (
-    <div className="flex min-h-0 h-full">
+    <div className="flex h-full min-h-0">
       <PostPreviewList
         channelId={channelId}
         selectedPostId={selectedPostId}
@@ -68,23 +68,20 @@ export default function ChannelLayout({ params }: ChannelLayoutProps) {
       />
 
       {selectedPost ? (
-        <PostDetail
-          post={selectedPost}
-          onClose={handleClose}
-        />
+        <PostDetail post={selectedPost} onClose={handleClose} />
       ) : (
-        <div className="flex-1 min-w-0 flex flex-col min-h-0">
-          <header className="flex-none flex items-center gap-3 p-6 pb-3">
+        <div className="flex min-h-0 min-w-0 flex-1 flex-col">
+          <header className="flex flex-none items-center gap-3 p-6 pb-3">
             <div className="flex-1" />
             <button
               onClick={handleClose}
-              className="w-9 h-9 flex items-center justify-center rounded-full border border-divider hover:bg-neutral-200 transition-colors"
+              className="flex h-9 w-9 items-center justify-center rounded-full border border-divider transition-colors hover:bg-neutral-200"
             >
-              <X className="w-4 h-4" />
+              <X className="h-4 w-4" />
             </button>
           </header>
-          <div className="flex-1 flex items-center justify-center text-neutral-500 text-sm">
-            {isLoadingPost ? 'Loading...' : 'Post not found'}
+          <div className="flex flex-1 items-center justify-center text-neutral-500 text-sm">
+            {isLoadingPost ? "Loading..." : "Post not found"}
           </div>
         </div>
       )}

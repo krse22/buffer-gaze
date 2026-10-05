@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import type { BufferChannel } from '@/contracts/channel';
-import { ChannelList } from '@/components/channel-list';
-import { LogoutButton } from '@/components/logout-button';
+import { ChannelList } from "@/components/channel-list";
+import { LogoutButton } from "@/components/logout-button";
+import type { BufferChannel } from "@/contracts/channel";
 
 type SidebarProps = {
   channels: BufferChannel[];
@@ -12,11 +12,11 @@ type SidebarProps = {
 
 function ChannelSkeleton() {
   return (
-    <div className="flex items-center gap-3 p-2 animate-pulse">
-      <div className="w-10 h-10 bg-neutral-300 rounded-full" />
+    <div className="flex animate-pulse items-center gap-3 p-2">
+      <div className="h-10 w-10 rounded-full bg-neutral-300" />
       <div className="flex-1">
-        <div className="h-4 bg-neutral-300 rounded w-24 mb-1" />
-        <div className="h-3 bg-neutral-300 rounded w-16" />
+        <div className="mb-1 h-4 w-24 rounded bg-neutral-300" />
+        <div className="h-3 w-16 rounded bg-neutral-300" />
       </div>
     </div>
   );
@@ -24,13 +24,13 @@ function ChannelSkeleton() {
 
 export function Sidebar({ channels, selectedChannelId, isLoading }: SidebarProps) {
   return (
-    <aside className="w-64 bg-surface flex flex-col h-full">
-      <div className="p-4 border-b border-divider">
-        <h1 className="font-heading text-xl text-foreground">Buffer Gaze</h1>
+    <aside className="flex h-full w-64 flex-col bg-surface">
+      <div className="border-divider border-b p-4">
+        <h1 className="font-heading text-foreground text-xl">Buffer Gaze</h1>
       </div>
 
       <div className="flex-1 overflow-y-auto p-3">
-        <div className="text-[10px] font-semibold text-foreground/50 uppercase tracking-widest mb-2 px-3">
+        <div className="mb-2 px-3 font-semibold text-[10px] text-foreground/50 uppercase tracking-widest">
           Channels
         </div>
         {isLoading ? (
@@ -40,14 +40,11 @@ export function Sidebar({ channels, selectedChannelId, isLoading }: SidebarProps
             <ChannelSkeleton />
           </div>
         ) : (
-          <ChannelList
-            channels={channels}
-            selectedId={selectedChannelId}
-          />
+          <ChannelList channels={channels} selectedId={selectedChannelId} />
         )}
       </div>
 
-      <div className="p-4 border-t border-divider">
+      <div className="border-divider border-t p-4">
         <LogoutButton fullWidth />
       </div>
     </aside>

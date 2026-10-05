@@ -1,7 +1,7 @@
 /**
  * Asset types for post media.
  */
-export type AssetType = 'document' | 'image' | 'video';
+export type AssetType = "document" | "image" | "video";
 
 /**
  * Represents a media asset attached to a post.

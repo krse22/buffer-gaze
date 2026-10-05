@@ -1,4 +1,4 @@
-import MainNavbar from '@/components/main-navbar';
+import MainNavbar from "@/components/main-navbar";
 
 export default function PublicLayout({ children }: { children: React.ReactNode }) {
   return (

@@ -1,10 +1,10 @@
 import { cookies } from "next/headers";
-import { BufferAccount } from "@/contracts/account";
-import { BufferChannel } from "@/contracts/channel";
-import { Post, PostsConnection } from "@/contracts/post";
-import { BufferErrorNonRec, NetworkError, UnauthorizedError } from "@/contracts/errors";
-import { bufferApi } from "@/utils/api-handler";
 import { COOKIE_KEYS } from "@/constants";
+import type { BufferAccount } from "@/contracts/account";
+import type { BufferChannel } from "@/contracts/channel";
+import type { BufferErrorNonRec, NetworkError, UnauthorizedError } from "@/contracts/errors";
+import type { Post, PostsConnection } from "@/contracts/post";
+import { bufferApi } from "@/utils/api-handler";
 
 /**
  * Fetches the authenticated user's account details from Buffer's GraphQL API.
@@ -12,7 +12,9 @@ import { COOKIE_KEYS } from "@/constants";
  *
  * @returns {Promise<BufferAccount | Error | UnauthorizedError | BufferErrorNonRec | NetworkError>} The account details or an error.
  */
-export async function getBufferAccount(): Promise<BufferAccount | Error | UnauthorizedError | BufferErrorNonRec | NetworkError> {
+export async function getBufferAccount(): Promise<
+  BufferAccount | Error | UnauthorizedError | BufferErrorNonRec | NetworkError
+> {
   const GET_ACCOUNT_QUERY = `
     query GetAccountDetails {
       account {
@@ -45,7 +47,9 @@ export async function getBufferAccount(): Promise<BufferAccount | Error | Unauth
  *
  * @returns {Promise<BufferChannel[] | Error | UnauthorizedError | BufferErrorNonRec | NetworkError>} An array of channel objects or an error.
  */
-export async function getBufferChannels(): Promise<BufferChannel[] | Error | UnauthorizedError | BufferErrorNonRec | NetworkError> {
+export async function getBufferChannels(): Promise<
+  BufferChannel[] | Error | UnauthorizedError | BufferErrorNonRec | NetworkError
+> {
   const cookieStore = await cookies();
   const organizationId = cookieStore.get(COOKIE_KEYS.ORGANIZATION_ID)?.value;
 
@@ -84,12 +88,12 @@ export async function getBufferChannels(): Promise<BufferChannel[] | Error | Una
  */
 export async function getBufferPosts(
   channelId: string,
-  after?: string
+  after?: string,
 ): Promise<PostsConnection | Error | UnauthorizedError | BufferErrorNonRec | NetworkError> {
   const cookieStore = await cookies();
   const organizationId = cookieStore.get(COOKIE_KEYS.ORGANIZATION_ID)?.value;
 
-  const afterClause = after ? `after: "${after}",` : '';
+  const afterClause = after ? `after: "${after}",` : "";
 
   const query = `
     query GetPosts {
@@ -145,7 +149,7 @@ export async function getBufferPosts(
  * Fetches a single post from Buffer's GraphQL API.
  */
 export async function getBufferPost(
-  postId: string
+  postId: string,
 ): Promise<Post | Error | UnauthorizedError | BufferErrorNonRec | NetworkError> {
   const query = `
     query GetPost {

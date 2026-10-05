@@ -1,8 +1,8 @@
-import { Button as BaseUIButton } from '@base-ui/react/button';
-import * as React from 'react';
+import { Button as BaseUIButton } from "@base-ui/react/button";
+import type * as React from "react";
 
-export type ButtonVariant = 'primary' | 'secondary' | 'ghost';
-export type ButtonSize = 'default' | 'icon' | 'block';
+export type ButtonVariant = "primary" | "secondary" | "ghost";
+export type ButtonSize = "default" | "icon" | "block";
 
 export interface ButtonProps extends React.ComponentPropsWithoutRef<typeof BaseUIButton> {
   variant?: ButtonVariant;
@@ -24,22 +24,22 @@ const baseStyles = `
 `;
 
 const variantStyles: Record<ButtonVariant, string> = {
-  primary: 'bg-accent text-background hover:bg-accent-600 active:bg-accent-700',
-  secondary: 'border-divider hover:bg-foreground/[0.07] active:bg-foreground/[0.14]',
-  ghost: 'text-accent px-1 hover:bg-accent/10 active:bg-accent/[0.18]',
+  primary: "bg-accent text-background hover:bg-accent-600 active:bg-accent-700",
+  secondary: "border-divider hover:bg-foreground/[0.07] active:bg-foreground/[0.14]",
+  ghost: "text-accent px-1 hover:bg-accent/10 active:bg-accent/[0.18]",
 };
 
 const sizeStyles: Record<ButtonSize, string> = {
-  default: '',
-  icon: 'w-9 h-9 p-0',
-  block: 'w-full mt-2',
+  default: "",
+  icon: "w-9 h-9 p-0",
+  block: "w-full mt-2",
 };
 
 export default function Button({
-  variant = 'primary',
-  size = 'default',
+  variant = "primary",
+  size = "default",
   children,
-  className = '',
+  className = "",
   ...props
 }: ButtonProps) {
   return (

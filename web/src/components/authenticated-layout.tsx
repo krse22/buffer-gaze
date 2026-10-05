@@ -1,19 +1,19 @@
-'use client';
+"use client";
 
-import { useQuery } from '@tanstack/react-query';
-import { usePathname } from 'next/navigation';
-import type { BufferChannel } from '@/contracts/channel';
-import { Sidebar } from '@/components/sidebar';
+import { useQuery } from "@tanstack/react-query";
+import { usePathname } from "next/navigation";
+import { Sidebar } from "@/components/sidebar";
+import type { BufferChannel } from "@/contracts/channel";
 
 type AuthenticatedLayoutProps = {
   children: React.ReactNode;
 };
 
 async function fetchChannels(): Promise<BufferChannel[]> {
-  const response = await fetch('/api/channels');
+  const response = await fetch("/api/channels");
   const data = await response.json();
   if (!response.ok) {
-    throw new Error(data.error?.message || 'Failed to fetch channels');
+    throw new Error(data.error?.message || "Failed to fetch channels");
   }
   return data;
 }
@@ -22,7 +22,7 @@ export function AuthenticatedLayout({ children }: AuthenticatedLayoutProps) {
   const pathname = usePathname();
 
   const { data: channels = [], isLoading } = useQuery({
-    queryKey: ['channels'],
+    queryKey: ["channels"],
     queryFn: fetchChannels,
   });
 
@@ -31,14 +31,8 @@ export function AuthenticatedLayout({ children }: AuthenticatedLayoutProps) {
 
   return (
     <div className="flex h-screen bg-surface">
-      <Sidebar
-        channels={channels}
-        selectedChannelId={selectedChannelId}
-        isLoading={isLoading}
-      />
-      <main className="flex-1 bg-neutral-100 overflow-auto">
-        {children}
-      </main>
+      <Sidebar channels={channels} selectedChannelId={selectedChannelId} isLoading={isLoading} />
+      <main className="flex-1 overflow-auto bg-neutral-100">{children}</main>
     </div>
   );
 }

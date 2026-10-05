@@ -1,10 +1,11 @@
 # Lint
 
-Run linting and fix issues.
+Run Biome to lint and format code.
 
 ## Steps
 
-1. Run `cd web && npm run lint`
-2. If errors found, fix them
-3. Re-run lint to verify
-4. Report what was fixed
+1. Run `npm run check` in the relevant folder (web or web-tests)
+2. This will lint and auto-fix formatting
+3. If errors remain, fix them manually
+4. Re-run to verify
+5. Report what was fixed

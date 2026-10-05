@@ -1,14 +1,14 @@
-import { getBufferPosts } from '@/services/buffer.service';
-import { toNextResponse } from '@/utils/api-handler';
-import { NextRequest } from 'next/server';
+import type { NextRequest } from "next/server";
+import { getBufferPosts } from "@/services/buffer.service";
+import { toNextResponse } from "@/utils/api-handler";
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
-  const channelId = searchParams.get('channelId');
-  const after = searchParams.get('after') ?? undefined;
+  const channelId = searchParams.get("channelId");
+  const after = searchParams.get("after") ?? undefined;
 
   if (!channelId) {
-    return toNextResponse(new Error('channelId is required'));
+    return toNextResponse(new Error("channelId is required"));
   }
 
   const result = await getBufferPosts(channelId, after);

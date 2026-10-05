@@ -1,23 +1,19 @@
-'use client';
+"use client";
 
 import Button from "@/components/button";
 
 type LogoutButtonProps = {
-    fullWidth?: boolean;
+  fullWidth?: boolean;
 };
 
 export function LogoutButton({ fullWidth }: LogoutButtonProps) {
-    async function startBufferLogout() {
-        window.location.href = '/api/auth/logout';
-    }
+  async function startBufferLogout() {
+    window.location.href = "/api/auth/logout";
+  }
 
-    return (
-        <Button
-            onClick={startBufferLogout}
-            variant="secondary"
-            size={fullWidth ? 'block' : 'default'}
-        >
-            Disconnect
-        </Button>
-    );
+  return (
+    <Button onClick={startBufferLogout} variant="secondary" size={fullWidth ? "block" : "default"}>
+      Disconnect
+    </Button>
+  );
 }
