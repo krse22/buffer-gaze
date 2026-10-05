@@ -1,0 +1,45 @@
+# Buffer Gaze
+
+A web application for viewing and managing Buffer posts.
+
+## Project Structure
+
+```
+Buffer/
+├── web/           # Next.js frontend (React 19, Next.js 16, Tailwind 4)
+├── web-tests/     # Playwright e2e tests
+└── design/        # Design assets
+```
+
+## Tech Stack
+
+- **Frontend**: Next.js 16, React 19, TypeScript
+- **Styling**: Tailwind CSS 4
+- **State**: TanStack Query
+- **Testing**: Playwright (in web-tests/)
+- **Linting**: ESLint with next config
+
+## Commands
+
+```bash
+# Web app
+cd web && npm run dev      # Start dev server
+cd web && npm run build    # Production build
+cd web && npm run lint     # Run ESLint
+
+# Tests
+cd web-tests && npm test   # Run Playwright tests
+```
+
+## Conventions
+
+- Use functional components with hooks
+- Prefer `next/image` over `<img>`
+- Use `useRouter` for navigation, not `window.location`
+- Keep components small and focused
+- Colocate related files
+
+## Git
+
+- Keep commit messages short (one line)
+- No co-authored-by lines
