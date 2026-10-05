@@ -1,19 +1,22 @@
 'use client';
 
-import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import type { PostsConnection } from '@/contracts/post';
-import { PostPreviewCard } from './post-preview-card';
-import { PostPreviewListSkeleton } from './post-preview-skeleton';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import type { Post, PostsConnection } from '@/contracts/post';
+import { PostTableView } from './post-table-view';
+import { PostCompactList } from './post-compact-list';
+import { Tag } from '@/components/tag';
 
 type PostPreviewListProps = {
   channelId: string;
+  selectedPostId?: string | null;
+  onSelectPost?: (post: Post) => void;
+  compact?: boolean;
 };
 
-async function fetchPosts(channelId: string, after?: string): Promise<PostsConnection> {
+async function fetchPosts(channelId: string, cursor?: string): Promise<PostsConnection> {
   const params = new URLSearchParams({ channelId });
-  if (after) params.set('after', after);
+  if (cursor) params.set('after', cursor);
 
   const response = await fetch(`/api/posts?${params}`);
   const data = await response.json();
@@ -25,66 +28,81 @@ async function fetchPosts(channelId: string, after?: string): Promise<PostsConne
   return data;
 }
 
-export function PostPreviewList({ channelId }: PostPreviewListProps) {
-  const [cursors, setCursors] = useState<string[]>([]);
-  const currentCursor = cursors[cursors.length - 1];
+export function PostPreviewList({ channelId, selectedPostId, onSelectPost, compact }: PostPreviewListProps) {
+  const [allPosts, setAllPosts] = useState<Post[]>([]);
+  const [cursor, setCursor] = useState<string | undefined>();
 
-  const { data, isLoading, error } = useQuery({
-    queryKey: ['posts', channelId, currentCursor],
-    queryFn: () => fetchPosts(channelId, currentCursor),
+  const { data, isLoading, error, isFetching } = useQuery({
+    queryKey: ['posts', channelId, cursor ?? 'initial'],
+    queryFn: () => fetchPosts(channelId, cursor),
   });
 
-  function handleNext() {
+  useEffect(() => {
+    if (data) {
+      const newPosts = data.edges.map(e => e.node);
+      if (cursor) {
+        setAllPosts(prev => [...prev, ...newPosts]);
+      } else {
+        setAllPosts(newPosts);
+      }
+    }
+  }, [data, cursor]);
+
+  function handleLoadMore() {
     if (data?.pageInfo.endCursor) {
-      setCursors(prev => [...prev, data.pageInfo.endCursor!]);
+      setCursor(data.pageInfo.endCursor);
     }
   }
 
-  function handlePrev() {
-    setCursors(prev => prev.slice(0, -1));
-  }
-
-  if (isLoading) {
-    return <PostPreviewListSkeleton />;
-  }
-
-  if (error) {
-    return (
-      <div className="text-center py-8 text-red-500 text-sm">{error.message}</div>
-    );
-  }
-
-  if (!data || data.edges.length === 0) {
-    return (
-      <div className="text-center py-8 text-gray-500 text-sm">No posts found</div>
-    );
-  }
+  const hasMore = data?.pageInfo.hasNextPage ?? false;
 
   return (
-    <div className="flex flex-col gap-2">
-      {data.edges.map((edge) => (
-        <PostPreviewCard key={edge.node.id} post={edge.node} channelId={channelId} />
-      ))}
-
-      <div className="flex items-center justify-between mt-4">
-        <button
-          onClick={handlePrev}
-          disabled={cursors.length === 0}
-          className="flex items-center gap-1 px-3 py-1.5 text-sm text-gray-600 hover:text-gray-900 disabled:opacity-30 disabled:cursor-not-allowed"
-        >
-          <ChevronLeft className="w-4 h-4" />
-          Previous
-        </button>
-
-        <button
-          onClick={handleNext}
-          disabled={!data.pageInfo.hasNextPage}
-          className="flex items-center gap-1 px-3 py-1.5 text-sm text-gray-600 hover:text-gray-900 disabled:opacity-30 disabled:cursor-not-allowed"
-        >
-          Next
-          <ChevronRight className="w-4 h-4" />
-        </button>
+    <div className="flex-1 flex flex-col min-h-0">
+      <div className="flex items-center gap-3 p-6 pb-3">
+        <h2 className="font-heading text-2xl">Posts</h2>
+        <Tag variant="neutral" className="ml-auto">
+          {allPosts.length}{hasMore ? '+' : ''}
+        </Tag>
       </div>
+
+      {compact && (
+        <PostCompactList
+          posts={allPosts}
+          selectedPostId={selectedPostId}
+          onSelectPost={onSelectPost}
+          isLoading={isLoading}
+          hasMore={hasMore}
+          onLoadMore={handleLoadMore}
+          isLoadingMore={isFetching && !!cursor}
+        />
+      )}
+
+      {!compact && (
+        <div className="flex-1 min-h-0 overflow-auto px-6 pb-6">
+        <div className="min-w-[500px]">
+          <div
+            className="grid gap-4 px-3 pb-2 text-[11px] font-bold tracking-wider uppercase text-neutral-600 border-b border-divider"
+            style={{ gridTemplateColumns: 'minmax(0, 2.5fr) 100px 100px' }}
+          >
+            <div>Post</div>
+            <div>Status</div>
+            <div className="text-right">Scheduled</div>
+          </div>
+
+          <PostTableView
+            posts={allPosts}
+            selectedPostId={selectedPostId}
+            onSelectPost={onSelectPost}
+            isLoading={isLoading}
+            hasMore={hasMore}
+            onLoadMore={handleLoadMore}
+            isLoadingMore={isFetching && !!cursor}
+            error={error}
+          />
+
+        </div>
+      </div>
+      )}
     </div>
   );
 }

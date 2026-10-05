@@ -30,13 +30,13 @@ export function AuthenticatedLayout({ children }: AuthenticatedLayoutProps) {
   const selectedChannelId = channelMatch ? channelMatch[1] : null;
 
   return (
-    <div className="flex h-screen bg-gray-900">
+    <div className="flex h-screen bg-surface">
       <Sidebar
         channels={channels}
         selectedChannelId={selectedChannelId}
         isLoading={isLoading}
       />
-      <main className="flex-1 bg-white rounded-l-3xl shadow-xl overflow-auto">
+      <main className="flex-1 bg-neutral-100 overflow-auto">
         {children}
       </main>
     </div>

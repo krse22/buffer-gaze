@@ -15,9 +15,9 @@ export function LogoutButton({ fullWidth }: LogoutButtonProps) {
         <Button
             onClick={startBufferLogout}
             variant="secondary"
-            className={fullWidth ? 'w-full' : ''}
+            size={fullWidth ? 'block' : 'default'}
         >
-            <span className="text-base text-gray-100">Disconnect</span>
+            Disconnect
         </Button>
     );
 }

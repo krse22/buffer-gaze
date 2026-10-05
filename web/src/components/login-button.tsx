@@ -7,7 +7,7 @@ export function LoginButton() {
 
     return (
         <Button onClick={startBufferLogin}>
-            <span className="text-base text-gray-100">Connect <span className="font-bold underline">buffer.com</span></span>
+            Connect <span className="font-semibold underline">buffer.com</span>
         </Button>
     );
 }

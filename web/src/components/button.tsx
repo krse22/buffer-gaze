@@ -1,35 +1,55 @@
 import { Button as BaseUIButton } from '@base-ui/react/button';
 import * as React from 'react';
 
+export type ButtonVariant = 'primary' | 'secondary' | 'ghost';
+export type ButtonSize = 'default' | 'icon' | 'block';
+
 export interface ButtonProps extends React.ComponentPropsWithoutRef<typeof BaseUIButton> {
-  variant?: 'primary' | 'secondary' | 'danger';
+  variant?: ButtonVariant;
+  size?: ButtonSize;
   children: React.ReactNode;
 }
 
+const baseStyles = `
+  inline-flex items-center justify-center gap-1.5
+  cursor-pointer no-underline
+  font-heading font-normal
+  text-sm leading-tight text-foreground
+  bg-transparent border border-transparent
+  py-2 px-4
+  rounded-full
+  transition-colors duration-150
+  focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2
+  disabled:opacity-45 disabled:cursor-not-allowed
+`;
+
+const variantStyles: Record<ButtonVariant, string> = {
+  primary: 'bg-accent text-background hover:bg-accent-600 active:bg-accent-700',
+  secondary: 'border-divider hover:bg-foreground/[0.07] active:bg-foreground/[0.14]',
+  ghost: 'text-accent px-1 hover:bg-accent/10 active:bg-accent/[0.18]',
+};
+
+const sizeStyles: Record<ButtonSize, string> = {
+  default: '',
+  icon: 'w-9 h-9 p-0',
+  block: 'w-full mt-2',
+};
+
 export default function Button({
   variant = 'primary',
+  size = 'default',
   children,
   className = '',
   ...props
 }: ButtonProps) {
-  // Flat UI color variants
-  const variantStyles = {
-    primary: 'bg-emerald-500 text-white hover:bg-emerald-600 active:bg-emerald-700',
-    secondary: 'bg-gray-700 text-slate-800 hover:bg-slate-300 active:bg-slate-400',
-    danger: 'bg-rose-500 text-white hover:bg-rose-600 active:bg-rose-700',
-  };
-
   return (
     <BaseUIButton
       className={`
-        inline-flex items-center justify-center gap-2 
-        px-4 py-2.5 text-sm font-medium 
-        rounded-lg transition-colors duration-150 
-        focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-emerald-500
-        disabled:opacity-50 disabled:pointer-events-none cursor-pointer
+        ${baseStyles}
         ${variantStyles[variant]}
+        ${sizeStyles[size]}
         ${className}
-      `}
+      `.trim()}
       {...props}
     >
       {children}

@@ -5,22 +5,22 @@ import { LoginButton } from '@/components/login-button';
 
 export default function MainNavbar() {
     return (
-        <header className="border-b border-gray-200 bg-white">
-            <nav className="mx-auto flex items-center justify-between p-4 text-gray-900">
-                <div><span className="font-bold">Buffer Gaze</span></div>
+        <header className="border-b border-divider bg-background">
+            <nav className="mx-auto flex items-center justify-between p-4 text-foreground">
+                <div><span className="font-heading text-lg">Buffer Gaze</span></div>
                 <NavigationMenu.Root>
                     <NavigationMenu.List className="flex items-center justify-between gap-2">
                         <NavigationMenu.Item>
-                            <NavigationMenu.Trigger className="flex items-center gap-1 cursor-pointer font-medium hover:text-blue-600">
+                            <NavigationMenu.Trigger className="flex items-center gap-1 cursor-pointer font-medium hover:text-accent">
                                 Overview
                                 <NavigationMenu.Icon>
                                     <ChevronDown className="w-4 h-4 transition-transform duration-200 [[data-panel-open]_&]:rotate-180" />
                                 </NavigationMenu.Icon>
                             </NavigationMenu.Trigger>
-                            <NavigationMenu.Content className="mt-2 w-48 bg-white p-2 shadow-md border border-gray-200">
+                            <NavigationMenu.Content className="mt-2 w-48 bg-surface p-2 shadow-md border border-divider rounded-xl">
                                 <ul>
                                     <li>
-                                        <a href="#" className="block p-2 hover:bg-gray-100 rounded">
+                                        <a href="#" className="block p-2 hover:bg-neutral-200 rounded-lg text-foreground no-underline">
                                             Hello world
                                         </a>
                                     </li>
