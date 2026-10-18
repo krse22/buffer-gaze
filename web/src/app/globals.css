@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Caprasimo:wght@400&family=Figtree:wght@400;600;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap");
 @import "tailwindcss";
 
 /* Base UI portal isolation */
@@ -7,46 +7,46 @@
 }
 
 :root {
-  /* Core colors */
-  --color-bg: #f5ead8;
-  --color-surface: #ebddc5;
-  --color-text: #201e1d;
-  --color-divider: rgba(32, 30, 29, 0.16);
+  /* Core colors - new palette */
+  --color-bg: oklch(0.985 0.004 260);
+  --color-surface: oklch(0.94 0.012 262);
+  --color-text: oklch(0.2 0.03 265);
+  --color-divider: color-mix(in oklch, oklch(0.2 0.03 265) 14%, transparent);
 
   /* Neutral scale */
-  --color-neutral-100: #f9f4ed;
-  --color-neutral-200: #eee7db;
-  --color-neutral-300: #dcd3c4;
-  --color-neutral-400: #c0b6a5;
-  --color-neutral-500: #a19786;
-  --color-neutral-600: #82796a;
-  --color-neutral-700: #645c50;
-  --color-neutral-800: #474238;
-  --color-neutral-900: #2e2b25;
+  --color-neutral-100: oklch(0.975 0.005 262);
+  --color-neutral-200: oklch(0.94 0.009 262);
+  --color-neutral-300: oklch(0.88 0.014 262);
+  --color-neutral-400: oklch(0.79 0.018 262);
+  --color-neutral-500: oklch(0.69 0.02 262);
+  --color-neutral-600: oklch(0.59 0.02 262);
+  --color-neutral-700: oklch(0.49 0.019 262);
+  --color-neutral-800: oklch(0.39 0.016 262);
+  --color-neutral-900: oklch(0.29 0.012 262);
 
-  /* Accent (terracotta) scale */
-  --color-accent: #c67139;
-  --color-accent-100: #fff2eb;
-  --color-accent-200: #ffe1d0;
-  --color-accent-300: #ffc6a5;
-  --color-accent-400: #f6a06b;
-  --color-accent-500: #d67f48;
-  --color-accent-600: #b2622d;
-  --color-accent-700: #8c491a;
-  --color-accent-800: #643312;
-  --color-accent-900: #402310;
+  /* Accent (purple) scale */
+  --color-accent: oklch(0.52 0.22 264);
+  --color-accent-100: oklch(0.975 0.05 264);
+  --color-accent-200: oklch(0.94 0.09 264);
+  --color-accent-300: oklch(0.88 0.14 264);
+  --color-accent-400: oklch(0.79 0.18 264);
+  --color-accent-500: oklch(0.69 0.2 264);
+  --color-accent-600: oklch(0.59 0.2 264);
+  --color-accent-700: oklch(0.49 0.19 264);
+  --color-accent-800: oklch(0.39 0.16 264);
+  --color-accent-900: oklch(0.29 0.12 264);
 
-  /* Accent 2 (olive) scale */
-  --color-accent-2: #7a8a5e;
-  --color-accent-2-100: #f0fae1;
-  --color-accent-2-200: #e1eecc;
-  --color-accent-2-300: #ccdbb2;
-  --color-accent-2-400: #aebf92;
-  --color-accent-2-500: #8fa073;
-  --color-accent-2-600: #728157;
-  --color-accent-2-700: #56633f;
-  --color-accent-2-800: #3d472b;
-  --color-accent-2-900: #272e1b;
+  /* Accent 2 (pink) scale */
+  --color-accent-2: oklch(0.66 0.15 355);
+  --color-accent-2-100: oklch(0.975 0.033 355);
+  --color-accent-2-200: oklch(0.94 0.059 355);
+  --color-accent-2-300: oklch(0.88 0.091 355);
+  --color-accent-2-400: oklch(0.79 0.117 355);
+  --color-accent-2-500: oklch(0.69 0.13 355);
+  --color-accent-2-600: oklch(0.59 0.13 355);
+  --color-accent-2-700: oklch(0.49 0.124 355);
+  --color-accent-2-800: oklch(0.39 0.104 355);
+  --color-accent-2-900: oklch(0.29 0.078 355);
 
   /* Spacing */
   --space-1: 4px;
@@ -56,16 +56,16 @@
   --space-6: 24px;
   --space-8: 32px;
 
-  /* Border radius */
-  --radius-sm: 8px;
-  --radius-md: 16px;
-  --radius-lg: 28px;
+  /* Border radius - tighter */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
   --radius-full: 9999px;
 
   /* Shadows */
-  --shadow-sm: 0 1px 2px rgba(46, 43, 37, 0.14);
-  --shadow-md: 0 3px 10px rgba(46, 43, 37, 0.16);
-  --shadow-lg: 0 12px 32px rgba(46, 43, 37, 0.22);
+  --shadow-sm: 0 1px 2px oklch(0.2 0.03 265 / 0.1);
+  --shadow-md: 0 3px 10px oklch(0.2 0.03 265 / 0.12);
+  --shadow-lg: 0 12px 32px oklch(0.2 0.03 265 / 0.18);
 }
 
 @theme inline {
@@ -108,7 +108,6 @@
   --color-accent2-900: var(--color-accent-2-900);
 
   /* Typography */
-  --font-heading: "Caprasimo", system-ui, sans-serif;
   --font-body: "Figtree", system-ui, sans-serif;
 
   /* Spacing */
@@ -132,15 +131,14 @@
 }
 
 body {
-  background: var(--color-bg);
+  background: var(--color-surface);
   color: var(--color-text);
   font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
 }
 
-h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-heading);
-  font-weight: 400;
-  line-height: 1.12;
-  letter-spacing: -0.015em;
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }

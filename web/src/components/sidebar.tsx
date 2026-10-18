@@ -1,7 +1,7 @@
 "use client";
 
+import { LogOut } from "lucide-react";
 import { ChannelList } from "@/components/channel-list";
-import { LogoutButton } from "@/components/logout-button";
 import type { BufferChannel } from "@/contracts/channel";
 
 type SidebarProps = {
@@ -12,29 +12,29 @@ type SidebarProps = {
 
 function ChannelSkeleton() {
   return (
-    <div className="flex animate-pulse items-center gap-3 p-2">
-      <div className="h-10 w-10 rounded-full bg-neutral-300" />
-      <div className="flex-1">
-        <div className="mb-1 h-4 w-24 rounded bg-neutral-300" />
-        <div className="h-3 w-16 rounded bg-neutral-300" />
-      </div>
+    <div className="flex animate-pulse items-center gap-2 rounded-md p-2">
+      <div className="h-4 w-4 rounded bg-neutral-300" />
+      <div className="h-4 w-24 rounded bg-neutral-300" />
     </div>
   );
 }
 
 export function Sidebar({ channels, selectedChannelId, isLoading }: SidebarProps) {
   return (
-    <aside className="flex h-full w-64 flex-col bg-surface">
-      <div className="border-divider border-b p-4">
-        <h1 className="font-heading text-foreground text-xl">Buffer Gaze</h1>
+    <aside className="flex h-full w-[232px] min-w-[188px] flex-col p-3">
+      {/* Logo */}
+      <div className="mb-4 flex items-center gap-2 p-2">
+        <span className="text-[17px] font-bold">Buffer Gaze</span>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-3">
-        <div className="mb-2 px-3 font-semibold text-[10px] text-foreground/50 uppercase tracking-widest">
+      {/* Channels */}
+      <nav className="flex flex-1 flex-col gap-0.5 overflow-y-auto">
+        <div className="px-2 pb-1 text-[11px] font-bold uppercase tracking-wider text-neutral-600">
           Channels
         </div>
         {isLoading ? (
-          <div className="space-y-1">
+          <div className="space-y-0.5">
+            <ChannelSkeleton />
             <ChannelSkeleton />
             <ChannelSkeleton />
             <ChannelSkeleton />
@@ -42,10 +42,24 @@ export function Sidebar({ channels, selectedChannelId, isLoading }: SidebarProps
         ) : (
           <ChannelList channels={channels} selectedId={selectedChannelId} />
         )}
-      </div>
+      </nav>
 
-      <div className="border-divider border-t p-4">
-        <LogoutButton fullWidth />
+      {/* Logout button */}
+      <button
+        type="button"
+        className="mb-2 flex w-full items-center justify-start gap-2 rounded-md bg-transparent px-2 py-2 text-sm text-neutral-800 transition-colors hover:bg-neutral-200"
+        onClick={() => (window.location.href = "/api/auth/logout")}
+      >
+        <LogOut className="h-4 w-4 flex-none" />
+        Log out
+      </button>
+
+      {/* User */}
+      <div className="flex items-center gap-2 border-t border-divider px-2 pt-3 pb-2">
+        <span className="grid h-7 w-7 flex-none place-items-center rounded-full bg-accent2-200 text-[11px] font-bold text-accent2-800">
+          U
+        </span>
+        <span className="text-sm font-semibold">User</span>
       </div>
     </aside>
   );

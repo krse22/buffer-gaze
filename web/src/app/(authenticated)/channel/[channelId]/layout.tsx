@@ -1,23 +1,46 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
-import { X } from "lucide-react";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { usePathname, useRouter } from "next/navigation";
-import { use } from "react";
-import { PostDetail } from "@/components/post-detail";
-import { PostPreviewList } from "@/components/previews/post-preview-list";
-import type { Post } from "@/contracts/post";
+import { use, useMemo } from "react";
+import { PostGrid } from "@/components/post-grid";
+import { PostSlideOver } from "@/components/post-slide-over";
+import type { BufferChannel } from "@/contracts/channel";
+import type { Post, PostsConnection } from "@/contracts/post";
 
 type ChannelLayoutProps = {
   children: React.ReactNode;
   params: Promise<{ channelId: string }>;
 };
 
+async function fetchPosts(channelId: string, cursor?: string): Promise<PostsConnection> {
+  const params = new URLSearchParams({ channelId });
+  if (cursor) params.set("after", cursor);
+
+  const response = await fetch(`/api/posts?${params}`);
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.error?.message || "Failed to fetch posts");
+  }
+
+  return data;
+}
+
 async function fetchPost(postId: string): Promise<Post> {
   const response = await fetch(`/api/posts/${postId}`);
   const data = await response.json();
   if (!response.ok) {
     throw new Error(data.error?.message || "Failed to fetch post");
+  }
+  return data;
+}
+
+async function fetchChannels(): Promise<BufferChannel[]> {
+  const response = await fetch("/api/channels");
+  const data = await response.json();
+  if (!response.ok) {
+    throw new Error(data.error?.message || "Failed to fetch channels");
   }
   return data;
 }
@@ -30,7 +53,39 @@ export default function ChannelLayout({ params }: ChannelLayoutProps) {
   const postIdMatch = pathname.match(/\/channel\/[^/]+\/posts\/([^/]+)/);
   const selectedPostId = postIdMatch ? postIdMatch[1] : null;
 
-  const { data: selectedPost, isLoading: isLoadingPost } = useQuery({
+  // Fetch channels to get channel info
+  const { data: channels = [] } = useQuery({
+    queryKey: ["channels"],
+    queryFn: fetchChannels,
+  });
+
+  const currentChannel = channels.find((c) => c.id === channelId);
+  const channelName = currentChannel?.displayName || currentChannel?.name || "Posts";
+  const channelService = currentChannel?.service;
+
+  // Fetch posts with infinite scroll
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading: isLoadingPosts,
+  } = useInfiniteQuery({
+    queryKey: ["posts", channelId],
+    queryFn: ({ pageParam }) => fetchPosts(channelId, pageParam),
+    getNextPageParam: (lastPage) =>
+      lastPage.pageInfo.hasNextPage ? lastPage.pageInfo.endCursor : undefined,
+    initialPageParam: undefined as string | undefined,
+  });
+
+  // Flatten all pages into a single array of posts
+  const allPosts = useMemo(() => {
+    if (!data) return [];
+    return data.pages.flatMap((page) => page.edges.map((e) => e.node));
+  }, [data]);
+
+  // Fetch selected post details
+  const { data: selectedPost } = useQuery({
     queryKey: ["post", selectedPostId],
     queryFn: () => {
       if (!selectedPostId) throw new Error("No post ID");
@@ -47,48 +102,32 @@ export default function ChannelLayout({ params }: ChannelLayoutProps) {
     router.push(`/channel/${channelId}`, { scroll: false });
   }
 
-  // No post selected - show full-width list
-  if (!selectedPostId) {
-    return (
-      <div className="flex h-full min-h-0">
-        <PostPreviewList
-          channelId={channelId}
-          selectedPostId={null}
-          onSelectPost={handleSelectPost}
-        />
-      </div>
-    );
+  function handleLoadMore() {
+    if (hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
   }
 
-  // Post selected - show list + detail
   return (
-    <div className="flex h-full min-h-0">
-      <PostPreviewList
-        channelId={channelId}
+    <>
+      <PostGrid
+        posts={allPosts}
+        channelName={channelName}
+        channelService={channelService}
         selectedPostId={selectedPostId}
         onSelectPost={handleSelectPost}
-        compact
+        onLoadMore={handleLoadMore}
+        hasMore={hasNextPage}
+        isLoading={isLoadingPosts || isFetchingNextPage}
       />
 
-      {selectedPost ? (
-        <PostDetail post={selectedPost} onClose={handleClose} />
-      ) : (
-        <div className="flex min-h-0 min-w-0 flex-1 flex-col">
-          <header className="flex flex-none items-center gap-3 p-6 pb-3">
-            <div className="flex-1" />
-            <button
-              type="button"
-              onClick={handleClose}
-              className="flex h-9 w-9 items-center justify-center rounded-full border border-divider transition-colors hover:bg-neutral-200"
-            >
-              <X className="h-4 w-4" />
-            </button>
-          </header>
-          <div className="flex flex-1 items-center justify-center text-neutral-500 text-sm">
-            {isLoadingPost ? "Loading..." : "Post not found"}
-          </div>
-        </div>
+      {selectedPostId && selectedPost && (
+        <PostSlideOver
+          post={selectedPost}
+          channelName={currentChannel?.displayName || currentChannel?.name}
+          onClose={handleClose}
+        />
       )}
-    </div>
+    </>
   );
 }
