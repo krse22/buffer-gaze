@@ -1,3 +1,6 @@
 node_modules/
 .DS_Store
 /design
+/test-files
+.env*
+!**/.env.example

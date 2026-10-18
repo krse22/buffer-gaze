@@ -19,6 +19,21 @@ Buffer/
 - **Testing**: Playwright (in web-tests/)
 - **Linting/Formatting**: Biome (strict)
 
+## Architecture (BFF)
+
+This app uses a **Backend for Frontend** pattern:
+
+```
+React (TanStack Query) → Next.js API Routes → Buffer GraphQL API
+```
+
+- **Frontend** (`src/app`, `src/components`): React components use TanStack Query to fetch from internal API routes
+- **API Routes** (`src/app/api/*`): Next.js route handlers that validate params and call services
+- **Services** (`src/services/*`): Server-side functions that build GraphQL queries and call Buffer's API
+- **Contracts** (`src/contracts/*`): Shared TypeScript types for API responses
+
+Data flows: Component → useQuery → `/api/posts` → `getBufferPosts()` → Buffer GraphQL
+
 ## Commands
 
 ```bash
